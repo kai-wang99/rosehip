@@ -2,17 +2,30 @@
 #define __ROSEHIP_TENSOR_H__
 
 #include <string>
+#include <list>
+
 using namespace std;
 
 namespace rosehip {
 
+class shape{
+public:
+	shape();
+	shape(int dim,...);
+	~shape();
+	const int& ndim() const;
+private:
+	int _ndim;
+	list<int> _dims;
+};
+
 class tensor{
 public:
-	tensor(string n);
+	tensor();
 	~tensor();
-	const string& name() const;
 private:
-	string _name;
+	shape _shape;
+	char* _data;
 
 };
 
