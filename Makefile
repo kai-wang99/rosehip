@@ -1,25 +1,32 @@
 PROJECT_ROOT = $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 
-OBJS = rosehip.o
+INCLUDE_PATH_FLAG = -I./core
 
-ifeq ($(BUILD_MODE),debug)
-	CFLAGS += -g
-else ifeq ($(BUILD_MODE),run)
+SOURCE_FILES_CC = ./app/rosehip.cpp \
+				  ./core/layer.cpp \
+				  ./core/tensor.cpp
+
+OBJS = $(subst .cpp,.o,${SOURCE_FILES_CC})
+
+ifeq ($(BUILD_MODE),run)
 	CFLAGS += -O2
 else
-	$(error Build mode $(BUILD_MODE) not supported by this Makefile)
+	CFLAGS += -g
 endif
+
+CFLAGS += ${INCLUDE_PATH_FLAG}
 
 all:	rosehip
 
 rosehip:	$(OBJS)
-	$(CXX) -o $@ $^
+	$(CXX) -o ./app/$@ $^
 
-%.o:	$(PROJECT_ROOT)%.cpp
+%.o:	%.cpp
+	@echo "making target:" $(INCLUDE_PATH_FLAG)
 	$(CXX) -c $(CFLAGS) $(CXXFLAGS) $(CPPFLAGS) -o $@ $<
 
-%.o:	$(PROJECT_ROOT)%.c
-	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<
+%.o:	%.c
+	$(CC) -c $(CFLAGS) $(CPPFLAGS) -o $@ $<	
 
 clean:
-	rm -fr rosehip $(OBJS)
+	rm -fr ./app/rosehip $(OBJS)
